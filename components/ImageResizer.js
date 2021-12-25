@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 import {
   Slider,
   SliderTrack,
@@ -25,14 +25,14 @@ import {
 import { MinusIcon, AddIcon } from '@chakra-ui/icons';
 
 import AvatarEditor from 'react-avatar-editor';
-import personOverlay from '../public/person-overlay.svg';
 
 const ImageResizer = ({ sizes, sourceImage, isProcessing, processImage }) => {
   const [scale, setScale] = useState(1.0);
   const editorRef = useRef(null);
 
   const handleProcessImage = () => {
-    const dataUrl = editorRef.current.getImage();
+    // const dataUrl = editorRef.current.getImage().toDataURL(); // keep original res
+    const dataUrl = editorRef.current.getImageScaledToCanvas().toDataURL(); // scale to canvas size 600x600 (this is pretty good, 300 pixels per inch)
     processImage(dataUrl);
   };
 
@@ -42,6 +42,10 @@ const ImageResizer = ({ sizes, sourceImage, isProcessing, processImage }) => {
 
   const changeScale = (delta) => {
     setScale(scale + delta);
+  };
+
+  const resetScale = () => {
+    setScale(1.0);
   };
 
   if (!sourceImage) return null;
@@ -59,7 +63,7 @@ const ImageResizer = ({ sizes, sourceImage, isProcessing, processImage }) => {
             ref={editorRef}
             scale={scale}
           />
-          <img
+          <ChakraImage
             src='/person-overlay.svg'
             alt='overlay'
             style={{
@@ -100,9 +104,25 @@ const ImageResizer = ({ sizes, sourceImage, isProcessing, processImage }) => {
           }}
         />
       </HStack>
-      <Button colorScheme='teal' onClick={handleProcessImage}>
-        {isProcessing ? 'Processing...' : 'Process'}
-      </Button>
+
+      <HStack>
+        <Button
+          isLoading={isProcessing}
+          loadingText='Processing'
+          colorScheme='teal'
+          onClick={handleProcessImage}
+        >
+          Process
+        </Button>
+        <Button
+          isDisabled={isProcessing}
+          colorScheme='teal'
+          variant='outline'
+          onClick={resetScale}
+        >
+          Reset
+        </Button>
+      </HStack>
     </VStack>
   );
 };

@@ -10,7 +10,9 @@ import {
   Box,
   HStack,
   Image as ChakraImage,
+  IconButton,
 } from '@chakra-ui/react';
+import { DownloadIcon } from '@chakra-ui/icons';
 
 import React, { useState, useRef } from 'react';
 
@@ -29,7 +31,7 @@ export default function Home() {
   });
 
   const fileInputRef = useRef(null);
-  const imageSizerRef = useRef(null);
+  const imageResizerRef = useRef(null);
 
   const getSourceImage = (e) => {
     if (e.target.files.length == 0) {
@@ -60,16 +62,19 @@ export default function Home() {
     const canvas = document.createElement('canvas');
     if (!canvas) return console.log('Canvas not supported');
 
-    canvas.width = sizes.picWidth * 3;
-    canvas.height = sizes.picHeight * 2;
-
-    const ctx = canvas.getContext('2d');
     const img = new Image();
 
     img.onload = () => {
+      canvas.width = sizes.picWidth * 3;
+      canvas.height = sizes.picHeight * 2;
+      // Note: use the following instead if we keep img's original size in ImageResizer
+      // canvas.width = img.width * 3;
+      // canvas.height = img.height * 2;
+
+      const ctx = canvas.getContext('2d');
       // Images in grid
-      for (let x = 0; x <= 3; x++) {
-        for (let y = 0; y <= 2; y++) {
+      for (let x = 0; x < 3; x++) {
+        for (let y = 0; y < 2; y++) {
           ctx.drawImage(img, (x * canvas.width) / 3, (y * canvas.height) / 2);
         }
       }
@@ -87,12 +92,12 @@ export default function Home() {
       ctx.closePath();
       ctx.stroke();
 
-      this.setState({
-        photoSet: canvas.toDataURL('image/jpg'),
-        isProcessing: false,
-      });
+      setIsProcessing(false);
+      setPhotoSet(canvas.toDataURL('image/jpg'));
 
-      // const node = ReactDOM.findDOMNode(this.refs.imageSizer);
+      // TODO: ref.current is null, not sure how to fix this
+      // const node = imageResizerRef.current;
+      // console.log(node);
       // if (window) window.scrollTo(0, node.scrollHeight + node.offsetHeight);
     };
 
@@ -169,15 +174,18 @@ export default function Home() {
           </HStack>
         </Center>
       </Container>
+
       <Heading size='lg' as='h2'>
         Step 2: Crop and position
       </Heading>
       <ImageResizer
+        ref={imageResizerRef}
         sizes={sizes}
         isProcessing={isProcessing}
         processImage={processImage}
         sourceImage={sourceImage}
       />
+
       <Heading size='lg' as='h2'>
         Step 3: Save and print
       </Heading>
@@ -189,6 +197,33 @@ export default function Home() {
         {`This is standard photo print size in US, Canada, Australia and India.
         This size is also called "10 × 15 cm" (6 x 4 in).`}
       </Text>
+
+      <Box as='a' href={photoSet} download='passport-photo-set.jpg'>
+        <VStack>
+          <img
+            src={photoSet}
+            style={{ width: '100%', maxWidth: 600, margin: 'auto' }}
+          />
+          <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
+            Download Photo Set
+          </Button>
+        </VStack>
+      </Box>
+
+      <div>
+        <p>This is the single cropped image in JPEG format</p>
+        <a href={photoSingle} download='passport-photo.jpg'>
+          <VStack>
+            <img
+              src={photoSingle}
+              style={{ width: '100%', maxWidth: 300, margin: 'auto' }}
+            />
+            <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
+              Download Photo Set
+            </Button>
+          </VStack>
+        </a>
+      </div>
     </VStack>
   );
 }
