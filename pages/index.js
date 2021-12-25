@@ -1,5 +1,4 @@
 import Head from 'next/head';
-// import Image from 'next/image';
 import {
   Container,
   Flex,
@@ -9,17 +8,28 @@ import {
   VStack,
   Button,
   Box,
-  Image,
   HStack,
+  Image as ChakraImage,
 } from '@chakra-ui/react';
+
 import React, { useState, useRef } from 'react';
 
 import loadingMsg from '../utils/loadingMessages';
+
+import ImageResizer from '../components/ImageResizer';
 
 export default function Home() {
   const [sourceImage, setSourceImage] = useState(null);
   const [photoSingle, setPhotoSingle] = useState(null);
   const [photoSet, setPhotoSet] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [sizes, setSizes] = useState({
+    picHeight: 600,
+    picWidth: 600,
+  });
+
+  const fileInputRef = useRef(null);
+  const imageSizerRef = useRef(null);
 
   const getSourceImage = (e) => {
     if (e.target.files.length == 0) {
@@ -40,12 +50,59 @@ export default function Home() {
     }
   };
 
-  const fileInput = useRef(null);
+  const processImage = (dataUrl) => {
+    setIsProcessing(true);
+    drawCanvas(dataUrl);
+  };
+
+  const drawCanvas = (dataUrl) => {
+    setPhotoSingle(dataUrl);
+    const canvas = document.createElement('canvas');
+    if (!canvas) return console.log('Canvas not supported');
+
+    canvas.width = sizes.picWidth * 3;
+    canvas.height = sizes.picHeight * 2;
+
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+
+    img.onload = () => {
+      // Images in grid
+      for (let x = 0; x <= 3; x++) {
+        for (let y = 0; y <= 2; y++) {
+          ctx.drawImage(img, (x * canvas.width) / 3, (y * canvas.height) / 2);
+        }
+      }
+
+      // Draw gridlines
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height / 2);
+      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.moveTo(canvas.width / 3, 0);
+      ctx.lineTo(canvas.width / 3, canvas.height);
+      ctx.moveTo((2 * canvas.width) / 3, 0);
+      ctx.lineTo((2 * canvas.width) / 3, canvas.height);
+      ctx.closePath();
+      ctx.stroke();
+
+      this.setState({
+        photoSet: canvas.toDataURL('image/jpg'),
+        isProcessing: false,
+      });
+
+      // const node = ReactDOM.findDOMNode(this.refs.imageSizer);
+      // if (window) window.scrollTo(0, node.scrollHeight + node.offsetHeight);
+    };
+
+    img.src = dataUrl;
+  };
 
   return (
     <VStack>
       <Heading as='h1' py={4}>
-        US Passport Photo Maker
+        Passport Photo Maker
       </Heading>
       <VStack>
         <Text>
@@ -56,25 +113,26 @@ export default function Home() {
           $0.10
         </Text>
       </VStack>
-
       <Heading size='lg' as='h2'>
         Step 1: Choose a photo
       </Heading>
-
-      <Container maxW={450} bg='gray.100' rounded='md' px={8} py={4}>
+      <Container maxW={450} bg='gray.100' rounded='md' px={6} py={4}>
         <Center>
           <HStack>
             <VStack alignItems='flex-start' pr={6}>
+              <Text pl={1} pt={4}>
+                Use your own photo:
+              </Text>
               <Button
                 colorScheme='teal'
                 onClick={() => {
-                  fileInput.current.click();
+                  fileInputRef.current.click();
                 }}
               >
                 <Text mx={2}>Upload your photo</Text>
               </Button>
               <input
-                ref={fileInput}
+                ref={fileInputRef}
                 type='file'
                 accept='image/*'
                 onChange={getSourceImage}
@@ -97,23 +155,29 @@ export default function Home() {
 
             {/* Note: next/image can't use FileReader data url as src */}
             {sourceImage ? (
-              <Image
-                src={sourceImage}
-                height='150'
-                m={4}
-                alt='Image preview...'
-              />
+              <VStack alignItems='flex-start'>
+                <Text>Preview</Text>
+                <ChakraImage
+                  src={sourceImage}
+                  height='150'
+                  alt='Image preview...'
+                />
+              </VStack>
             ) : (
               <></>
             )}
           </HStack>
         </Center>
       </Container>
-
       <Heading size='lg' as='h2'>
         Step 2: Crop and position
       </Heading>
-
+      <ImageResizer
+        sizes={sizes}
+        isProcessing={isProcessing}
+        processImage={processImage}
+        sourceImage={sourceImage}
+      />
       <Heading size='lg' as='h2'>
         Step 3: Save and print
       </Heading>
