@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Image from 'next/image';
+// import Image from 'next/image';
 import {
   Container,
   Flex,
@@ -9,13 +9,37 @@ import {
   VStack,
   Button,
   Box,
+  Image,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 
 export default function Home() {
+  const [sourceImage, setSourceImage] = useState(null);
+  const [photoSingle, setPhotoSingle] = useState(null);
+  const [photoSet, setPhotoSet] = useState(null);
+
+  const getSourceImage = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    if (!file.type.match('image')) return alert('Must be an image :}');
+
+    reader.onloadend = () => {
+      console.log(reader.result);
+      setSourceImage(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      new Error('No file detected');
+    }
+  };
+
   return (
     <VStack>
       <Heading as='h1' py={4}>
-        Passport Photo Maker
+        US Passport Photo Maker
       </Heading>
       <VStack>
         <Text>
@@ -33,7 +57,13 @@ export default function Home() {
 
       <Container maxW={400} bg='gray.100' rounded='md' px={8} py={4}>
         <p>Upload your photo:</p>
-        <input type='file' onChange />
+        <input type='file' onChange={getSourceImage} />
+        {sourceImage ? (
+          // next/image can't use FileReader data url as src
+          <Image src={sourceImage} height='100' m={4} alt='Image preview...' />
+        ) : (
+          <></>
+        )}
         <p>Not ready? Try our test image:</p>
         <Button colorScheme='teal'>
           <Text mx={4}>Demo</Text>
