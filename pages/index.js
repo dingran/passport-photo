@@ -10,8 +10,11 @@ import {
   Button,
   Box,
   Image,
+  HStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import React, { useState, useRef } from 'react';
+
+import loadingMsg from '../utils/loadingMessages';
 
 export default function Home() {
   const [sourceImage, setSourceImage] = useState(null);
@@ -19,13 +22,14 @@ export default function Home() {
   const [photoSet, setPhotoSet] = useState(null);
 
   const getSourceImage = (e) => {
+    if (e.target.files.length == 0) {
+      //user likely clicked Cancel in file input popup
+      return;
+    }
+
     const file = e.target.files[0];
     const reader = new FileReader();
-
-    if (!file.type.match('image')) return alert('Must be an image :}');
-
     reader.onloadend = () => {
-      console.log(reader.result);
       setSourceImage(reader.result);
     };
 
@@ -35,6 +39,8 @@ export default function Home() {
       new Error('No file detected');
     }
   };
+
+  const fileInput = useRef(null);
 
   return (
     <VStack>
@@ -55,19 +61,53 @@ export default function Home() {
         Step 1: Choose a photo
       </Heading>
 
-      <Container maxW={400} bg='gray.100' rounded='md' px={8} py={4}>
-        <p>Upload your photo:</p>
-        <input type='file' onChange={getSourceImage} />
-        {sourceImage ? (
-          // next/image can't use FileReader data url as src
-          <Image src={sourceImage} height='100' m={4} alt='Image preview...' />
-        ) : (
-          <></>
-        )}
-        <p>Not ready? Try our test image:</p>
-        <Button colorScheme='teal'>
-          <Text mx={4}>Demo</Text>
-        </Button>
+      <Container maxW={450} bg='gray.100' rounded='md' px={8} py={4}>
+        <Center>
+          <HStack>
+            <VStack alignItems='flex-start' pr={6}>
+              <Button
+                colorScheme='teal'
+                onClick={() => {
+                  fileInput.current.click();
+                }}
+              >
+                <Text mx={2}>Upload your photo</Text>
+              </Button>
+              <input
+                ref={fileInput}
+                type='file'
+                accept='image/*'
+                onChange={getSourceImage}
+                hidden
+              />
+
+              <Text pl={1} pt={4}>
+                Not ready? Try a demo photo:
+              </Text>
+              <Button
+                colorScheme='teal'
+                variant='outline'
+                onClick={() => {
+                  setSourceImage('/demo-photo.jpg');
+                }}
+              >
+                <Text mx={2}>Use a demo photo</Text>
+              </Button>
+            </VStack>
+
+            {/* Note: next/image can't use FileReader data url as src */}
+            {sourceImage ? (
+              <Image
+                src={sourceImage}
+                height='150'
+                m={4}
+                alt='Image preview...'
+              />
+            ) : (
+              <></>
+            )}
+          </HStack>
+        </Center>
       </Container>
 
       <Heading size='lg' as='h2'>
