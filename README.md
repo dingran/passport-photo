@@ -1,3 +1,7 @@
+Note: This is a makeover of this project https://github.com/patmood/passport-photo ([demo site](https://www.passportreadyphoto.com/)) for learning purposes. I'll rewrite the app with some adjustement in Next.js. All credit goes to the original author!
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
