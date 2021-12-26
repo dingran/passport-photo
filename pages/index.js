@@ -161,9 +161,13 @@ export default function Home() {
           Step 1: Choose a photo
         </Heading>
 
-        <Container maxW={400} bg='gray.100' rounded='md'>
+        <Container maxW={sourceImage ? 400 : 250} bg='gray.100' rounded='md'>
           <Flex height='100%' width='100%' gridGap={2} my={4}>
-            <VStack width='60%' align='flex-start' justify='space-between'>
+            <VStack
+              width={sourceImage ? '60%' : '100%'}
+              align='flex-start'
+              justify='space-between'
+            >
               <VStack alignItems='flex-start'>
                 <Text>Use your own photo:</Text>
                 <Button
