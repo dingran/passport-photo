@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import { NextSeo } from 'next-seo';
+
 import {
   Container,
   Flex,
@@ -107,6 +109,12 @@ export default function Home() {
 
   return (
     <VStack>
+      <NextSeo
+        title='Passport Photo Maker'
+        description='Photo shops charge around $20 for a set of passport photos! Make your own and print them at a standard photo kiosk for around $0.10'
+        canonical='https://passportphoto.dingran.me/'
+        //TODO: more SEO stuff?
+      />
       <Heading as='h1' py={4}>
         Passport Photo Maker
       </Heading>
