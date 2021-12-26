@@ -1,4 +1,8 @@
-Note: This is a makeover of this project https://github.com/patmood/passport-photo ([demo site](https://www.passportreadyphoto.com/)) for learning purposes. I'll rewrite the app with some adjustement in Next.js. All credit goes to the original author!
+Photo shops charge around $20 for a set of passport photos!
+
+Make your own and print them at a standard photo kiosk for around $0.10
+
+**Note**: This is a makeover of this project https://github.com/patmood/passport-photo ([demo site](https://www.passportreadyphoto.com/)) for learning purposes. I'll rewrite the app with some adjustement in Next.js. All credit goes to the original author!
 
 ---
 
