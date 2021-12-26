@@ -11,8 +11,10 @@ import {
   Button,
   Box,
   HStack,
+  Stack,
   Image as ChakraImage,
   IconButton,
+  ButtonGroup,
 } from '@chakra-ui/react';
 import { DownloadIcon } from '@chakra-ui/icons';
 
@@ -22,6 +24,31 @@ import loadingMsg from '../utils/loadingMessages';
 
 import ImageResizer from '../components/ImageResizer';
 import BMAC from '../components/BMAC';
+
+import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+
+export const SocialMediaLinks = (props) => (
+  <ButtonGroup variant='ghost' color='gray.600' {...props}>
+    {/* <IconButton
+      as='a'
+      href='#'
+      aria-label='LinkedIn'
+      icon={<FaLinkedin fontSize='20px' />}
+    /> */}
+    <IconButton
+      as='a'
+      href='https://github.com/dingran/passport-photo'
+      aria-label='GitHub'
+      icon={<FaGithub fontSize='20px' />}
+    />
+    {/* <IconButton
+      as='a'
+      href='#'
+      aria-label='Twitter'
+      icon={<FaTwitter fontSize='20px' />}
+    /> */}
+  </ButtonGroup>
+);
 
 export default function Home() {
   const [sourceImage, setSourceImage] = useState(null);
@@ -242,11 +269,11 @@ export default function Home() {
       ) : (
         <></>
       )}
-      <Center>
-        <Box m={8}>
-          <BMAC />
-        </Box>
+      <Center pt={10}>
+        <BMAC />
       </Center>
+
+      <SocialMediaLinks />
     </VStack>
   );
 }
