@@ -15,6 +15,8 @@ import {
   Image as ChakraImage,
   IconButton,
   ButtonGroup,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react';
 import { DownloadIcon } from '@chakra-ui/icons';
 
@@ -135,68 +137,66 @@ export default function Home() {
   };
 
   return (
-    <VStack>
-      <NextSeo
-        title='Passport Photo Maker'
-        description='Photo shops charge around $20 for a set of passport photos! Make your own and print them at a standard photo kiosk for around $0.10'
-        canonical='https://passportphoto.dingran.me/'
-        //TODO: more SEO stuff?
-      />
-      <Heading as='h1' py={4}>
-        Passport Photo Maker
-      </Heading>
+    <Container>
       <VStack>
-        <Text>
-          Photo shops charge around $20 for a set of passport photos!{' '}
-        </Text>
-        <Text>
-          Make your own and print them at a standard photo kiosk for around
-          $0.10
-        </Text>
-      </VStack>
-      <Heading size='lg' as='h2'>
-        Step 1: Choose a photo
-      </Heading>
-      <Container maxW={450} bg='gray.100' rounded='md' px={6} py={4}>
-        <Center>
-          <HStack>
-            <VStack alignItems='flex-start' pr={6}>
-              <Text pl={1} pt={4}>
-                Use your own photo:
-              </Text>
-              <Button
-                colorScheme='teal'
-                onClick={() => {
-                  fileInputRef.current.click();
-                }}
-              >
-                <Text mx={2}>Upload your photo</Text>
-              </Button>
-              <input
-                ref={fileInputRef}
-                type='file'
-                accept='image/*'
-                onChange={getSourceImage}
-                hidden
-              />
+        <NextSeo
+          title='Passport Photo Maker'
+          description='Photo shops charge around $20 for a set of passport photos! Make your own and print them at a standard photo kiosk for around $0.10'
+          canonical='https://passportphoto.dingran.me/'
+          //TODO: more SEO stuff?
+        />
+        <Heading as='h1' py={4}>
+          Passport Photo Maker
+        </Heading>
+        <VStack>
+          <Text>
+            Photo shops charge around $20 for a set of passport photos!{' '}
+          </Text>
+          <Text>
+            Make your own and print them at a standard photo kiosk for around
+            $0.10
+          </Text>
+        </VStack>
+        <Heading size='lg' as='h2'>
+          Step 1: Choose a photo
+        </Heading>
 
-              <Text pl={1} pt={4}>
-                Not ready? Try a demo photo:
-              </Text>
-              <Button
-                colorScheme='teal'
-                variant='outline'
-                onClick={() => {
-                  setSourceImage('/demo-photo.jpg');
-                }}
-              >
-                <Text mx={2}>Use a demo photo</Text>
-              </Button>
-            </VStack>
-
-            {/* Note: next/image can't use FileReader data url as src */}
-            {sourceImage ? (
+        <Container maxW={400} bg='gray.100' rounded='md'>
+          <Flex height='100%' width='100%' gridGap={2} my={4}>
+            <VStack width='60%' align='flex-start' justify='space-between'>
               <VStack alignItems='flex-start'>
+                <Text>Use your own photo:</Text>
+                <Button
+                  colorScheme='teal'
+                  onClick={() => {
+                    fileInputRef.current.click();
+                  }}
+                >
+                  Upload your photo
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type='file'
+                  accept='image/*'
+                  onChange={getSourceImage}
+                  hidden
+                />
+              </VStack>
+              <VStack alignItems='flex-start'>
+                <Text>Not ready? Try a demo photo:</Text>
+                <Button
+                  colorScheme='teal'
+                  variant='outline'
+                  onClick={() => {
+                    setSourceImage('/demo-photo.jpg');
+                  }}
+                >
+                  Use a demo photo
+                </Button>
+              </VStack>
+            </VStack>
+            {sourceImage ? (
+              <VStack width='40%'>
                 <Text>Preview</Text>
                 <ChakraImage
                   src={sourceImage}
@@ -207,73 +207,73 @@ export default function Home() {
             ) : (
               <></>
             )}
-          </HStack>
-        </Center>
-      </Container>
+          </Flex>
+        </Container>
 
-      <Heading size='lg' as='h2'>
-        Step 2: Crop and position
-      </Heading>
-      <ImageResizer
-        ref={imageResizerRef}
-        sizes={sizes}
-        isProcessing={isProcessing}
-        processImage={processImage}
-        sourceImage={sourceImage}
-      />
+        <Heading size='lg' as='h2'>
+          Step 2: Crop and position
+        </Heading>
+        <ImageResizer
+          ref={imageResizerRef}
+          sizes={sizes}
+          isProcessing={isProcessing}
+          processImage={processImage}
+          sourceImage={sourceImage}
+        />
 
-      <Heading size='lg' as='h2'>
-        Step 3: Save and print
-      </Heading>
-      {photoSet ? (
-        <>
-          <Text>
-            Print this image at your local photo kiosk or pharmacy as a standard
-            size photo. A single photo should cost around $0.10
-          </Text>
-          <Text>
-            {`This is standard photo print size in US, Canada, Australia and India.
+        <Heading size='lg' as='h2'>
+          Step 3: Save and print
+        </Heading>
+        {photoSet ? (
+          <>
+            <Text>
+              Print this image at your local photo kiosk or pharmacy as a
+              standard size photo. A single photo should cost around $0.10
+            </Text>
+            <Text>
+              {`This is standard photo print size in US, Canada, Australia and India.
         This size is also called "10 × 15 cm" (6 x 4 in).`}
-          </Text>
-          <Box as='a' href={photoSet} download='passport-photo-set.jpg'>
-            <VStack>
-              <img
-                src={photoSet}
-                style={{ width: '100%', maxWidth: 600, margin: 'auto' }}
-              />
-              <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
-                Download Photo Set
-              </Button>
-            </VStack>
-          </Box>
-        </>
-      ) : (
-        <></>
-      )}
+            </Text>
+            <Box as='a' href={photoSet} download='passport-photo-set.jpg'>
+              <VStack>
+                <img
+                  src={photoSet}
+                  style={{ width: '100%', maxWidth: 600, margin: 'auto' }}
+                />
+                <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
+                  Download Photo Set
+                </Button>
+              </VStack>
+            </Box>
+          </>
+        ) : (
+          <></>
+        )}
 
-      {photoSingle ? (
-        <div>
-          <p>This is the single cropped image in JPEG format</p>
-          <a href={photoSingle} download='passport-photo.jpg'>
-            <VStack>
-              <img
-                src={photoSingle}
-                style={{ width: '100%', maxWidth: 300, margin: 'auto' }}
-              />
-              <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
-                Download Photo Set
-              </Button>
-            </VStack>
-          </a>
-        </div>
-      ) : (
-        <></>
-      )}
-      <Center pt={10}>
-        <BMAC />
-      </Center>
+        {photoSingle ? (
+          <div>
+            <p>This is the single cropped image in JPEG format</p>
+            <a href={photoSingle} download='passport-photo.jpg'>
+              <VStack>
+                <img
+                  src={photoSingle}
+                  style={{ width: '100%', maxWidth: 300, margin: 'auto' }}
+                />
+                <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
+                  Download Photo Set
+                </Button>
+              </VStack>
+            </a>
+          </div>
+        ) : (
+          <></>
+        )}
+        <Center pt={10}>
+          <BMAC />
+        </Center>
 
-      <SocialMediaLinks />
-    </VStack>
+        <SocialMediaLinks />
+      </VStack>
+    </Container>
   );
 }
