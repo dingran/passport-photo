@@ -19,6 +19,7 @@ import React, { useState, useRef } from 'react';
 import loadingMsg from '../utils/loadingMessages';
 
 import ImageResizer from '../components/ImageResizer';
+import BMAC from '../components/BMAC';
 
 export default function Home() {
   const [sourceImage, setSourceImage] = useState(null);
@@ -189,41 +190,55 @@ export default function Home() {
       <Heading size='lg' as='h2'>
         Step 3: Save and print
       </Heading>
-      <Text>
-        Print this image at your local photo kiosk or pharmacy as a standard
-        size photo. A single photo should cost around $0.10
-      </Text>
-      <Text>
-        {`This is standard photo print size in US, Canada, Australia and India.
+      {photoSet ? (
+        <>
+          <Text>
+            Print this image at your local photo kiosk or pharmacy as a standard
+            size photo. A single photo should cost around $0.10
+          </Text>
+          <Text>
+            {`This is standard photo print size in US, Canada, Australia and India.
         This size is also called "10 × 15 cm" (6 x 4 in).`}
-      </Text>
+          </Text>
+          <Box as='a' href={photoSet} download='passport-photo-set.jpg'>
+            <VStack>
+              <img
+                src={photoSet}
+                style={{ width: '100%', maxWidth: 600, margin: 'auto' }}
+              />
+              <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
+                Download Photo Set
+              </Button>
+            </VStack>
+          </Box>
+        </>
+      ) : (
+        <></>
+      )}
 
-      <Box as='a' href={photoSet} download='passport-photo-set.jpg'>
-        <VStack>
-          <img
-            src={photoSet}
-            style={{ width: '100%', maxWidth: 600, margin: 'auto' }}
-          />
-          <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
-            Download Photo Set
-          </Button>
-        </VStack>
-      </Box>
-
-      <div>
-        <p>This is the single cropped image in JPEG format</p>
-        <a href={photoSingle} download='passport-photo.jpg'>
-          <VStack>
-            <img
-              src={photoSingle}
-              style={{ width: '100%', maxWidth: 300, margin: 'auto' }}
-            />
-            <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
-              Download Photo Set
-            </Button>
-          </VStack>
-        </a>
-      </div>
+      {photoSingle ? (
+        <div>
+          <p>This is the single cropped image in JPEG format</p>
+          <a href={photoSingle} download='passport-photo.jpg'>
+            <VStack>
+              <img
+                src={photoSingle}
+                style={{ width: '100%', maxWidth: 300, margin: 'auto' }}
+              />
+              <Button leftIcon={<DownloadIcon />} colorScheme='teal'>
+                Download Photo Set
+              </Button>
+            </VStack>
+          </a>
+        </div>
+      ) : (
+        <></>
+      )}
+      <Center>
+        <Box m={8}>
+          <BMAC />
+        </Box>
+      </Center>
     </VStack>
   );
 }
